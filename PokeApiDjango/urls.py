@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from PokeApiDjango.views import fetch_pokemon_data
+from .views import PokemonApiService
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('fetch_pokemon_data/', fetch_pokemon_data)
+    path('fetch_pokemon_data/', PokemonApiService.fetch_pokemon_data),
+    path('fetch_pokemon_data/<int:pokemon_id>/', PokemonApiService.fetch_pokemon_data)
 ]
