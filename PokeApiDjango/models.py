@@ -2,7 +2,7 @@ from django.db import models
 import uuid
 
 
-class Pokemon(models.Model):
+class PokemonTable(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -17,3 +17,4 @@ class Pokemon(models.Model):
 
     def __str__(self):
         return self.name
+        pass
