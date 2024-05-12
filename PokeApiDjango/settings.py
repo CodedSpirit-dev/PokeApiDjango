@@ -44,7 +44,8 @@ INSTALLED_APPS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Agrega tus orígenes permitidos aquí
+    #Allow all origins
+    "http://localhost:5173"  # Agrega tus orígenes permitidos aquí
 ]
 
 

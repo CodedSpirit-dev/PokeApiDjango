@@ -38,5 +38,7 @@ class ScoreService:
         other_factors = pokemon_data['height'] + pokemon_data['weight']
 
         score = (type_weight * types_count) + (stats_weight * stats_sum) + (abilities_weight * abilities_count) + (
-                    other_weight * other_factors)
+                other_weight * other_factors)
+        # Round the score to 2 decimal places
+        score = round(score, 2)
         return score
