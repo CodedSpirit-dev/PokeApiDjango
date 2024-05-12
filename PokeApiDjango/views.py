@@ -8,50 +8,72 @@ from PokeApiDjango.services.services import PokemonApiService, ScoreService
 
 @api_view(['GET'])
 def fetch_pokemon_data(request, pokemon_name_or_id):
-    pokemon_data = PokemonApiService.get_pokemon_data(pokemon_name_or_id)
-    score = ScoreService.calculate_score(pokemon_data)
+    """
+    Fetches data for a specified Pokemon by name or ID from an external API, calculates its score,
+    and returns a simplified set of data to the front end. If the Pokemon already exists in the database,
+    it returns the existing data instead of fetching from the external API again.
 
-    processed_data = {
-        'name': pokemon_data['name'],
-        'pokemon_id': pokemon_data['pokemon_id'],
-        'types': pokemon_data['types'],
-        'abilities': pokemon_data['abilities'],
-        'base_stats': pokemon_data['base_stats'],
-        'height': pokemon_data['height'],
-        'weight': pokemon_data['weight'],
-        'sprite_url': pokemon_data['sprite_url'],
-        'score': score
-    }
+    Args:
+        request: The HTTP request object.
+        pokemon_name_or_id: The name or ID of the Pokemon to fetch.
 
-    data_to_show = {
-        'name': pokemon_data['name'],
-        'pokemon_id': pokemon_data['pokemon_id'],
-        'types': pokemon_data['types'],
-        'abilities': pokemon_data['abilities'],
-        'score': score
-    }
+    Returns:
+        A Response object containing the Pokemon's name, ID, types, and score.
+    """
+    # Initialize data_to_show
+    data_to_show = {}
 
-    if Pokemon.objects.filter(pokemon_id=pokemon_data['pokemon_id']).exists():
-        pokemon = Pokemon.objects.get(pokemon_id=pokemon_data['pokemon_id'])
-        pokemon_data = {
-            'unique_id': pokemon.unique_id,
-            'name': pokemon.name,
-            'pokemon_id': pokemon.pokemon_id,
-            'types': pokemon.types,
-            'abilities': pokemon.abilities,
-            'base_stats': pokemon.base_stats,
-            'height': pokemon.height,
-            'weight': pokemon.weight,
-            'sprite_url': pokemon.sprite_url,
-            'score': pokemon.score
+    # Check if the input is a digit, indicating it's an ID
+    if pokemon_name_or_id.isdigit():
+        # Convert to integer
+        pokemon_id = int(pokemon_name_or_id)
+        # Attempt to fetch the Pokemon by ID
+        existing_pokemon = Pokemon.objects.filter(pokemon_id=pokemon_id).first()
+    else:
+        # Attempt to fetch the Pokemon by name (case-insensitive)
+        existing_pokemon = Pokemon.objects.filter(name__iexact=pokemon_name_or_id).first()
+
+    if existing_pokemon:
+        # Prepare data to return if the Pokemon exists
+        data_to_show = {
+            'name': existing_pokemon.name,
+            'pokemon_id': existing_pokemon.pokemon_id,
+            'types': existing_pokemon.types,
+            'score': existing_pokemon.score,
+            'sprite_url': existing_pokemon.sprite_url
+        }
+    else:
+        # Fetch new Pokemon data from the external API if it doesn't exist in the database
+        pokemon_data = PokemonApiService.get_pokemon_data(pokemon_name_or_id)
+        score = ScoreService.calculate_score(pokemon_data)
+
+        # Prepare the data to be saved in the database
+        processed_data = {
+            'name': pokemon_data['name'],
+            'pokemon_id': pokemon_data['pokemon_id'],
+            'types': pokemon_data['types'],
+            'abilities': pokemon_data['abilities'],
+            'base_stats': pokemon_data['base_stats'],
+            'height': pokemon_data['height'],
+            'weight': pokemon_data['weight'],
+            'sprite_url': pokemon_data['sprite_url'],
+            'score': score
         }
 
-        pokemon = Pokemon(**processed_data)
-        return Response(processed_data, status=status.HTTP_200_OK)
-    else:
+        # Save the new Pokemon data in the database
         pokemon = Pokemon(**processed_data)
         pokemon.save()
-        return Response(processed_data, status=status.HTTP_200_OK)
+
+        # Prepare data to return for the new Pokemon
+        data_to_show = {
+            'name': pokemon_data['name'],
+            'pokemon_id': pokemon_data['pokemon_id'],
+            'types': pokemon_data['types'],
+            'score': score,
+            'sprite_url': pokemon_data['sprite_url']
+        }
+
+    return Response(data_to_show, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

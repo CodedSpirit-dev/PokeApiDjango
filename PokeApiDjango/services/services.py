@@ -3,10 +3,10 @@ import requests
 
 def process_pokemon_data(pokemon_data):
     return {
-        'name': pokemon_data['name'],
-        'pokemon_id': pokemon_data['id'],  # Cambiado a pokemon_id
-        'types': [type_data['type']['name'] for type_data in pokemon_data['types']],
-        'abilities': [ability_data['ability']['name'] for ability_data in pokemon_data['abilities']],
+        'name': pokemon_data['name'],  # Keep the original case
+        'pokemon_id': pokemon_data['id'],
+        'types': [type_data['type']['name'] for type_data in pokemon_data['types']],  # Keep the original case
+        'abilities': [ability_data['ability']['name'] for ability_data in pokemon_data['abilities']],  # Keep the original case
         'base_stats': {stat['stat']['name']: stat['base_stat'] for stat in pokemon_data['stats']},
         'height': pokemon_data['height'],
         'weight': pokemon_data['weight'],
