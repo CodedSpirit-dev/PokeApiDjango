@@ -1,99 +1,341 @@
-## Instrucciones del ejercicio para el Candidato:
+# PokeApiDjango
+Este proyecto es una API REST desarrollada en Django Rest Framework que consume la API pública de Pokémon y almacena la información de los Pokémon en una base de datos SQLite. Además, se implementa un servicio para calcular un puntaje para cada Pokémon.
 
-Desarrollar una aplicación web utilizando Django REST Framework para el backend y React para el frontend. La aplicación debe permitir a los usuarios buscar información sobre Pokémon utilizando la Poke API (https://pokeapi.co/), agregar Pokémon a una base de datos local (SQLite), ver una lista de los Pokémon agregados, ver detalles específicos de un Pokémon y calcular y mostrar su puntaje.
+## Lista de tareas que este proyecto cumple:
+- [x] Crear modelo de Django para almacenar información sobre los Pokémon.
+- [x] Implementar un servicio para interactuar con la API pública de Pokémon.
+- [x] Implementar un servicio para obtener un puntaje del Pokémon.
+- [x] Crear un endpoint para obtener la información de un Pokémon por su ID o nombre.
+- [x] Crear un endpoint para crear y guardar un Pokémon en la base de datos.
+- [x] Crear un endpoint para actualizar la información de un Pokémon en la base de datos.
+- [x] Crear un endpoint para eliminar un Pokémon de la base de datos.
+- [x] Crear un endpoint para obtener toda la información de un Pokémon, incluyendo su puntaje.
+- [x] Crear un endpoint para obtener la lista de Pokémon almacenados en la base de datos, incluyendo su puntaje y la URL de la imagen.
+- [x] Crear un endpoint para calcular el puntaje de todos los Pokémon almacenados en la base de datos.
 
-### Desarrollo del Backend (Django REST Framework):
-
-Implementa la funcionalidad requerida en el backend utilizando Django REST Framework.
-
-1. Crear modelo de Django para almacenar información sobre los Pokémon, incluyendo su nombre, ID, tipos, habilidades, estadísticas base, altura, peso y URL de la imagen. Ejemplo de los campos y formato requerido:
+## Manual de uso de los endpoints
+### 1. Obtener la información de un Pokémon por su ID o nombre
+- **URL:** `/pokemon/<id_or_name>/`
+- **Método:** GET
+- **Parámetros:**
+  - `id_or_name`: ID o nombre del Pokémon.
+  - **Ejemplo:** `/pokemon/1/` o `/pokemon/bulbasaur/`
+  - **Nota:** El nombre del Pokémon debe estar en minúsculas.
+  - **Nota:** Este endpoint obtiene la información del Pokémon desde la API pública y posteriormente la almacena en la base de datos.
+- **Respuesta:**
+- **Código de estado:** 200
+- **Cuerpo de la respuesta:**
 ```json
 {
   "id": "b7701bbd-68ec-4f57-9c3e-29a807d28d06",
   "created_at": "2024-05-07T01:32:50.109162Z",
   "updated_at": "2024-05-07T01:32:50.109200Z",
-  "name": "zapdos",
-  "pokemon_id": 145,
+  "name": "bulbasaur",
+  "pokemon_id": 1,
   "types": [
-    "electric",
-    "flying"
+	"grass",
+	"poison"
   ],
   "abilities": [
-    "pressure",
-    "static"
+	"overgrow",
+	"chlorophyll"
   ],
   "base_stats": {
-    "hp": 90,
-    "attack": 90,
-    "defense": 85,
-    "special-attack": 125,
-    "special-defense": 90,
-    "speed": 100
+	"hp": 45,
+	"attack": 49,
+	"defense": 49,
+	"special-attack": 65,
+	"special-defense": 65,
+	"speed": 45
   },
-  "height": 16,
-  "weight": 526,
-  "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/145.png"
+  "height": 7,
+  "weight": 69,
+  "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+  "score": 0
 }
 ```
-2. Crear los siguientes servicios:
 
-	2.1. Pokemon API Service: Implementar un servicio para interactuar con la API pública de Pokémon. Este servicio es el encargado de procesar las peticiones a la API publica.
-	
-	```python
-	class PokemonApiService:
-	    @staticmethod
-	    def get_pokemon_data(pokemon_name_or_id):
-		    # Hacer llamada a la api publica
-	        ...
+### 2. Crear y guardar un Pokémon en la base de datos
+- **URL:** `/pokemon/`
+- **Método:** POST
+- **Nota:** Si no se usa un url de imagen, se usará la imagen por defecto de la API pública, que en este caso será la imagen de Pikachu.
+- **Parámetros:**
+  - **Cuerpo de la petición:** 
+```json
+{
+  "name": "Motapod", //An unexisting pokemon
+  "types": [
+    "Electric",
+    "Flying"
+  ], //Custom types
+  "abilities": [ //Custom abilities
+    "sand-veil", 
+    "sand-rush"
+  ],
+  "base_stats": { //Custom base stats
+    "hp": 1,
+    "attack": 3,
+    "defense": 100,
+    "special-attack": 0,
+    "special-defense": 100,
+    "speed": 3
+  },
+  "height": 4,
+  "weight": 60,
+  "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
+}
+```
+- **Respuesta:**
+- **Código de estado:** 200
+- **Cuerpo de la respuesta:**
+```json
+{
+  "name": "Motapod",
+  "types": [
+    "Electric",
+    "Flying"
+  ],
+  "abilities": [
+    "sand-veil",
+    "sand-rush"
+  ],
+  "base_stats": {
+    "hp": 1,
+    "attack": 3,
+    "defense": 100,
+    "special-attack": 0,
+    "special-defense": 100,
+    "speed": 3
+  },
+  "height": 4,
+  "weight": 60,
+  "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
+  "pokemon_id": 10286,
+  "score": 69.69999999999999
+}
+```
 
-	    @staticmethod
-	    def process_pokemon_data(pokemon_data):
-	        # Procesar y transformar la data publica para ajustrla a como lo requiere el modelo
-	        ...
-	```
-	2.2. Score Service: implementar un servicio para obtener un puntaje del Pokemon (ver detalles)
-	
-	
-	```python
-	class ScoreService:
-	    @staticmethod
-	    def calculate_score(pokemon):
-	        ...
-	```
-	
-	```
-	Cálculo del Puntaje: El puntaje de un Pokémon se calcula sumando diferentes factores, cada uno multiplicado por un peso:
+### 3. Actualizar la información de un Pokémon en la base de datos
+- **URL:** `/pokemon/<id_or_name>/`
+- **Método:** PUT
+- **Parámetros:**
+  - `id_or_name`: ID o nombre del Pokémon.
+  - **Ejemplo:** `/pokemon/1/` o `/pokemon/bulbasaur/`
+  - **Nota:** El nombre del Pokémon debe estar en minúsculas.
+  - **Cuerpo de la petición:** Mismo cuerpo de la petición que el endpoint de creación.
+```json
+{
+  "name": "Motapod",
+  "types": [
+    "Electric",
+    "Flying"
+  ],
+  "abilities": [
+    "sand-veil",
+    "sand-rush"
+  ],
+  "base_stats": {
+    "hp": 1,
+    "attack": 3,
+    "defense": 100,
+    "special-attack": 0,
+    "special-defense": 100,
+    "speed": 3
+  },
+  "height": 4,
+  "weight": 60,
+  "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
+}
 
-	Puntaje=(PesoTipo×Tipos)+(PesoEstadisticas×Estadisticas)+(PesoHabilidades×Habilidades)+(PesoOtros×Otros)Puntaje=(PesoTipo×Tipos)+(PesoEstadisticas×Estadisticas)+(PesoHabilidades×Habilidades)+(PesoOtros×Otros)
+```
+- **Respuesta:**
+- **Código de estado:** 200
+- **Cuerpo de la respuesta:**
+```json
+{
+  "name": "Motapod",
+  "types": [
+    "Electric",
+    "Flying"
+  ],
+  "abilities": [
+    "sand-veil",
+    "sand-rush"
+  ],
+  "base_stats": {
+    "hp": 1,
+    "attack": 3,
+    "defense": 100,
+    "special-attack": 0,
+    "special-defense": 100,
+    "speed": 3
+  },
+  "height": 4,
+  "weight": 60,
+  "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
+  "pokemon_id": 10286,
+  "score": 69.69999999999999
+}
+```
 
-	Los pesos son 0.4 para tipos, 0.3 para estadisticas, 0.2 para habilidades y 0.1 para otros
+### 4. Eliminar un Pokémon de la base de datos
+- **URL:** `/pokemon/<id_or_name>/`
+- **Método:** DELETE
+- **Parámetros:**
+  - `id_or_name`: ID o nombre del Pokémon.
+  - **Ejemplo:** `/pokemon/1/` o `/pokemon/bulbasaur/`
+  - **Nota:** El nombre del Pokémon debe estar en minúsculas.
+- **Respuesta:**
+- **Código de estado:** 200
+- **Cuerpo de la respuesta:**
+```json
+{
+  "message": "The pokemon Motapod with id 10287 deleted successfully" //The information of the deleted pokemon changes depending on the pokemon deleted
+}
+```
 
-	Por ejemplo, si un Pokémon tiene 2 tipos, 3 habilidades, una suma de estadísticas base de 300, una altura de 0.5 m y un peso de 10 kg, el cálculo del puntaje sería:
+### 5. Obtener toda la información de un Pokémon, incluyendo su puntaje
+- **URL:** `/pokemon/<id_or_name>/full/`
+- **Método:** GET
+- **Parámetros:**
+  - `id_or_name`: ID o nombre del Pokémon.
+  - **Ejemplo:** `/get_pokemon_data_from_db/14/` o `/get_pokemon_data_from_db/kakuna/`
+  - **Nota:** El nombre del Pokémon debe estar en minúsculas.
+  - **Nota:** Este endpoint obtiene la información del Pokémon desde la base de datos, no desde la API pública.
+  - **Respuesta:**
+  - **Código de estado:** 200
+  - **Cuerpo de la respuesta:**
+```json
+{
+    "name": "kakuna",
+    "pokemon_id": 14,
+    "types": [
+        "bug",
+        "poison"
+    ],
+    "abilities": [
+        "shed-skin"
+    ],
+    "base_stats": {
+        "hp": 45,
+        "attack": 25,
+        "defense": 50,
+        "special-attack": 25,
+        "special-defense": 25,
+        "speed": 35
+    },
+    "height": 6,
+    "weight": 100,
+    "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/14.png",
+    "score": 73.1
+}
+```
 
-	Puntaje=(0.4×2)+(0.3×300)+(0.2×3)+(0.1×(0.5+10))=0.8+90+0.6+1.05=92.45Puntaje=(0.4×2)+(0.3×300)+(0.2×3)+(0.1×(0.5+10))=0.8+90+0.6+1.05=92.45
-	```	
+### 6. Obtener la lista de Pokémon almacenados en la base de datos, incluyendo su puntaje y la URL de la imagen
+- **URL:** `/get_list_of_pokemon_saved_in_db/`
+- **Método:** GET
+- **Nota:** Este endpoint obtiene la información de todos los Pokémon almacenados en la base de datos.
+- **Respuesta:**
+- **Código de estado:** 200
+- **Cuerpo de la respuesta**
+```json
+[
+    {
+        "name": "weedle",
+        "pokemon_id": 13,
+        "types": [
+            "bug",
+            "poison"
+        ],
+        "abilities": [
+            "shield-dust",
+            "run-away"
+        ],
+        "base_stats": {
+            "hp": 40,
+            "attack": 35,
+            "defense": 30,
+            "special-attack": 20,
+            "special-defense": 20,
+            "speed": 50
+        },
+        "height": 3,
+        "weight": 32,
+        "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/13.png",
+        "score": 63.199999999999996
+    },
+    {
+        "name": "kakuna",
+        "pokemon_id": 14,
+        "types": [
+            "bug",
+            "poison"
+        ],
+        "abilities": [
+            "shed-skin"
+        ],
+        "base_stats": {
+            "hp": 45,
+            "attack": 25,
+            "defense": 50,
+            "special-attack": 25,
+            "special-defense": 25,
+            "speed": 35
+        },
+        "height": 6,
+        "weight": 100,
+        "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/14.png",
+        "score": 73.1
+    }
+]
+```
+### 7. Calcular el puntaje de un Pokémon
+- **URL:** `/calculate_score_of_pokemon/`
+- **Método:** GET
+- **Parámetros:**
+  - `id_or_name`: ID o nombre del Pokémon.
+  - **Ejemplo:** `/calculate_score_of_pokemon/14/` o `/calculate_score_of_pokemon/kakuna/`
+  - **Nota:** El nombre del Pokémon debe estar en minúsculas.
+- **Nota:** Este endpoint calcula el puntaje de un Pokémon en base a sus estadísticas base.
+- **Respuesta:**
+- **Código de estado:** 200
+- **Cuerpo de la respuesta:**
+```json
+{
+  "pokemon_name": "kakuna",
+  "pokemon_id": 14,
+  "score": 73.1
+}
+```
+
+## Instalación
+1. Clonar el repositorio:
+```bash
+git clone
+```
+2. Crear un entorno virtual:
+```bash
+python -m venv venv
+```
+3. Activar el entorno virtual:
+```bash
+source venv/bin/activate
+```
+4. Instalar las dependencias:
+```bash
+pip install -r requirements.txt
+```
+5. Realizar las migraciones:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+6. Iniciar el servidor:
+```bash
+python manage.py runserver
+```
+7. Una vez iniciado, iniciar el proyecto de el cual se encuentra en el siguiente enlace: [Frontend](https://github.com/CodedSpirit-dev/PokeApi_React)
+8. Listo, ya puedes empezar a usar la API.
 
 
-	
-	
-3. Crear los siguientes endpoints:
-	* 3.1 Endpoint para buscar y obtener datos un Pokemon usando el Servicio.
-	* 3.2 Endpoint para crear/guardar pokemon en la base de datos.
-	* 3.3 Endpoint para editar/actualizar pokemon.
-	* 3.4 Endpoint para eliminar un Pokémon de la base de datos.
-	* 3.5 Endpoint para  obtener información detallada de Pokémon guardado en la base de datos.
-	* 3.6 Endpoint para  la lista de Pokemones guardados en la base de datos.	
-	* 3.7 Endpoint para obtener el cálculo de puntajes de Pokémon guardado en la base de datos.
-
-### Desarrollo del Frontend (Opcional, para evaluar la habilidad con React):
-1. Desarrolla una interfaz frontal básica para interactuar con las APIs del backend.
-2. Enfócate en características fundamentales del frontend como mostrar un formulario para buscar Pokémon y agregarlos a la base de datos, listar Pokémon almacenados en la base de datos, mostrar información detallada sobre Pokémon seleccionados y agregar un botón para calcular y mostrar puntajes de Pokémon.
-3. Utiliza React o cualquier framework JavaScript moderno de tu elección para construir la aplicación frontend.
-
-### Integración:
-1. Asegura una integración fluida entre los componentes frontend y backend.
-2. Maneja las solicitudes y respuestas de la API de manera adecuada, incluyendo manejo de errores y validación.
-3. Demuestra cómo la aplicación frontend interactúa con las APIs de Django REST para realizar operaciones CRUD en los datos de Pokémon y calcular puntajes.
-
-En resumen, concéntrate más en el desarrollo del backend utilizando Django REST Framework, mientras que opcionalmente demuestras habilidades en desarrollo frontend con React o cualquier framework JavaScript preferido. Asegura una integración sin problemas entre los componentes frontend y backend para mostrar comprensión y habilidad integral en desarrollo full-stack.
 
