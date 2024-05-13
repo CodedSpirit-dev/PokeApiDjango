@@ -308,4 +308,38 @@ Este proyecto es una API REST desarrollada en Django Rest Framework que consume 
 }
 ```
 
+## Instalación
+1. Clonar el repositorio:
+```bash
+git clone
+```
+2. Crear un entorno virtual:
+```bash
+python -m venv venv
+```
+3. Activar el entorno virtual:
+```bash
+source venv/bin/activate
+```
+4. Instalar las dependencias:
+```bash
+pip install -r requirements.txt
+```
+5. Realizar las migraciones:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+6. Iniciar el servidor:
+```bash
+python manage.py runserver
+```
+7. Una vez iniciado, iniciar el proyecto de Frontend en la carpeta `frontend`:
+```bash
+npm install
+npm start
+```
+8. Acceder a la URL `http://
+
+
 
