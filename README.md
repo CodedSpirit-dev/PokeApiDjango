@@ -15,11 +15,11 @@ Este proyecto es una API REST desarrollada en Django Rest Framework que consume 
 
 ## Manual de uso de los endpoints
 ### 1. Obtener la información de un Pokémon por su ID o nombre
-- **URL:** `/pokemon/<id_or_name>/`
+- **URL:** `/pokemon/fetch/<id_or_name>/`
 - **Método:** GET
 - **Parámetros:**
   - `id_or_name`: ID o nombre del Pokémon.
-  - **Ejemplo:** `/pokemon/1/` o `/pokemon/bulbasaur/`
+  - **Ejemplo:** `/pokemon/fetch/1/` o `/pokemon/fetch/bulbasaur/`
   - **Nota:** El nombre del Pokémon debe estar en minúsculas.
   - **Nota:** Este endpoint obtiene la información del Pokémon desde la API pública y posteriormente la almacena en la base de datos.
 - **Respuesta:**
@@ -56,7 +56,7 @@ Este proyecto es una API REST desarrollada en Django Rest Framework que consume 
 ```
 
 ### 2. Crear y guardar un Pokémon en la base de datos
-- **URL:** `/pokemon/`
+- **URL:** `/pokemon/add/`
 - **Método:** POST
 - **Nota:** Si no se usa un url de imagen, se usará la imagen por defecto de la API pública, que en este caso será la imagen de Pikachu.
 - **Parámetros:**
@@ -116,7 +116,7 @@ Este proyecto es una API REST desarrollada en Django Rest Framework que consume 
 ```
 
 ### 3. Actualizar la información de un Pokémon en la base de datos
-- **URL:** `/pokemon/<id_or_name>/`
+- **URL:** `/pokemon/update/<id_or_name>/`
 - **Método:** PUT
 - **Parámetros:**
   - `id_or_name`: ID o nombre del Pokémon.
@@ -179,7 +179,7 @@ Este proyecto es una API REST desarrollada en Django Rest Framework que consume 
 ```
 
 ### 4. Eliminar un Pokémon de la base de datos
-- **URL:** `/pokemon/<id_or_name>/`
+- **URL:** `/pokemon/delete/<id_or_name>/`
 - **Método:** DELETE
 - **Parámetros:**
   - `id_or_name`: ID o nombre del Pokémon.
@@ -195,11 +195,9 @@ Este proyecto es una API REST desarrollada en Django Rest Framework que consume 
 ```
 
 ### 5. Obtener toda la información de un Pokémon, incluyendo su puntaje
-- **URL:** `/pokemon/<id_or_name>/full/`
+- **URL:** `/pokemon/get/`
 - **Método:** GET
 - **Parámetros:**
-  - `id_or_name`: ID o nombre del Pokémon.
-  - **Ejemplo:** `/get_pokemon_data_from_db/14/` o `/get_pokemon_data_from_db/kakuna/`
   - **Nota:** El nombre del Pokémon debe estar en minúsculas.
   - **Nota:** Este endpoint obtiene la información del Pokémon desde la base de datos, no desde la API pública.
   - **Respuesta:**
@@ -232,7 +230,7 @@ Este proyecto es una API REST desarrollada en Django Rest Framework que consume 
 ```
 
 ### 6. Obtener la lista de Pokémon almacenados en la base de datos, incluyendo su puntaje y la URL de la imagen
-- **URL:** `/get_list_of_pokemon_saved_in_db/`
+- **URL:** `/list_all/`
 - **Método:** GET
 - **Nota:** Este endpoint obtiene la información de todos los Pokémon almacenados en la base de datos.
 - **Respuesta:**
