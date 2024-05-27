@@ -23,14 +23,13 @@ def fetch_pokemon_data(request, pokemon_name_or_id):
     # Initialize data_to_show
     data_to_show = {}
 
-    # Check if the input is a digit, indicating it's an ID
     if pokemon_name_or_id.isdigit():
         # Convert to integer
         pokemon_id = int(pokemon_name_or_id)
         # Attempt to fetch the Pokemon by ID
         existing_pokemon = Pokemon.objects.filter(pokemon_id=pokemon_id).first()
     else:
-        # Attempt to fetch the Pokemon by name (case-insensitive)
+        # Attempt to fetch the Pokemon by name
         existing_pokemon = Pokemon.objects.filter(name__iexact=pokemon_name_or_id).first()
 
     if existing_pokemon:
@@ -45,6 +44,9 @@ def fetch_pokemon_data(request, pokemon_name_or_id):
     else:
         # Fetch new Pokemon data from the external API if it doesn't exist in the database
         pokemon_data = PokemonApiService.get_pokemon_data(pokemon_name_or_id)
+        if not pokemon_data:
+            return Response({'error': 'Pokemon not found in the API'}, status=status.HTTP_404_NOT_FOUND)
+
         score = ScoreService.calculate_score(pokemon_data)
 
         # Prepare the data to be saved in the database

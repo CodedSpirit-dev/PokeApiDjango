@@ -19,6 +19,8 @@ class PokemonApiService:
     def get_pokemon_data(pokemon_name_or_id):
         url = f'https://pokeapi.co/api/v2/pokemon/{pokemon_name_or_id}/'
         response = requests.get(url)
+        if response.status_code != 200:
+            return None
         pokemon_data = response.json()
         processed_data = process_pokemon_data(pokemon_data)
         return processed_data
